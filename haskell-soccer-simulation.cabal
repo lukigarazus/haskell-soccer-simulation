@@ -1,0 +1,83 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: afa09208f211fd3c4d99fd976b748b6e06071009d1b043b4f0a04a74a3e57983
+
+name:           haskell-soccer-simulation
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/haskell-soccer-simulation#readme>
+homepage:       https://github.com/githubuser/haskell-soccer-simulation#readme
+bug-reports:    https://github.com/githubuser/haskell-soccer-simulation/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2020 Author name here
+license:        BSD3
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/haskell-soccer-simulation
+
+library
+  exposed-modules:
+      League
+      Lib
+      Match
+      PlannedMatch
+      Round
+      Season
+      Table
+      Team
+  other-modules:
+      Paths_haskell_soccer_simulation
+  hs-source-dirs:
+      src
+  build-depends:
+      Hoed
+    , base >=4.7 && <5
+    , exact-combinatorics
+    , json
+    , random
+    , regex-tdfa-text
+  default-language: Haskell2010
+
+executable haskell-soccer-simulation-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_haskell_soccer_simulation
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      Hoed
+    , base >=4.7 && <5
+    , exact-combinatorics
+    , haskell-soccer-simulation
+    , json
+    , random
+    , regex-tdfa-text
+  default-language: Haskell2010
+
+test-suite haskell-soccer-simulation-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_haskell_soccer_simulation
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      Hoed
+    , base >=4.7 && <5
+    , exact-combinatorics
+    , haskell-soccer-simulation
+    , json
+    , random
+    , regex-tdfa-text
+  default-language: Haskell2010
