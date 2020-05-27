@@ -25,7 +25,6 @@ dependencies:
   - Hoed
   - regex-tdfa-text
   - json
-  - exact-combinatorics
 
 library:
   source-dirs: src

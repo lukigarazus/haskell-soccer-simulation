@@ -11,6 +11,8 @@ unifyName m team
   | otherwise = team
   where n = name team
 
+getWinner ts = name . head . reverse . sort $ ts
+
 instance Show Table where
-  show (Table ts) = concat (intersperse "\n" (map show (sort ( map (unifyName m) ts))))
-    where m = length . name . maximum $ ts
+  show (Table ts) = concat (intersperse "\n" (map show (reverse . sort $ (map (unifyName m) ts))))
+    where m = maximum (map (length . name) ts)

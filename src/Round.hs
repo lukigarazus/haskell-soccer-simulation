@@ -11,14 +11,6 @@ data Round = Round { roundMatches :: [PlannedMatch], index :: Int, played :: May
 
 ---------------------------------------------------------------
 
-makeRounds opponents modifier = go opponents []
-  where go opponents rounds =
-          case all (\Opponents { opponents = o } -> (length o) == 0) opponents of
-            True  -> rounds
-            False -> go newOpponents (rounds ++ (newRound : []))
-              where newRound     = makeRound opponents ((length rounds) + 1 + modifier)
-                    newOpponents = removeUsedOpponents opponents newRound
-
 findValidOpponent go team potentialOpponents matches opponentsObjects teams =
   case potentialOpponents of
     [] -> Nothing
@@ -45,31 +37,18 @@ makeRound opponentsObjects i =
     Nothing -> Round [] (-1) Nothing
     Just x  -> Round x  i    Nothing
 
-areTeamsPlaying h a m =
-  case find (\PlannedMatch { home' = h', away' = a' } -> (h' == a || h' == h) && (a' == a || a' == h)) m of
-    Nothing -> False
-    _       -> True
+makeRounds opponents modifier = go opponents []
+  where go opponents rounds =
+          -- check if all opponents have been exhausted
+          case all (\Opponents { opponents = o } -> (length o) == 0) opponents of
+            True  -> rounds
+            False -> go newOpponents (rounds ++ (newRound : []))
+              where newRound     = makeRound opponents ((length rounds) + 1 + modifier)
+                    newOpponents = removeUsedOpponents opponents newRound
 
-removeUsedOpponents opponents Round { roundMatches = rm } = map (\Opponents { team = t, opponents = o } -> Opponents t (filter (\o -> not $ areTeamsPlaying t o rm) o)) opponents
+removeUsedOpponents opponents Round { roundMatches = rm } = map (\Opponents { team = t, opponents = o } -> Opponents t (filter (\o -> not $ areTeamsPlayingInThisMatch t o rm) o)) opponents
 
 ---------------------------------------------------------------
-
-accumulatePlayedMatches (ms, randomGoals) pm =
-    case playMatch randomGoals pm of
-        (m, nRandomGoals) -> (m : ms, nRandomGoals)
-        _                 -> (ms, randomGoals)
-
-playRoundMatches randomGoals Round { roundMatches = pms, index = i } = Round pms i $ Just $ fst (foldl accumulatePlayedMatches ([], randomGoals) pms)
-
-getMatchesLength Round { roundMatches = rm } = length rm 
-
-getTeamsFromPlayedRound Round { played = p } =
-    case p of
-        Nothing -> []
-        Just ms -> concat . map (\Match { home = h, away = a, homeScore = hs, awayScore = as } -> [addMatch h as hs, addMatch a hs as]) $ ms
-
-removeRoundMatchesFromPlannedMatches pms Round { roundMatches = ro } =
-  filter (not . (flip elem $ ro)) pms
 
 instance Show Round where
     show Round { roundMatches = rm, index = i, played = p } =

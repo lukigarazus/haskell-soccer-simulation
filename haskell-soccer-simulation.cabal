@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e09e30a850977dcadc13e1cadf22258e8c7ee537557fe973c9ed891ee4c0250a
+-- hash: 571cd7ea0085c8ad457ab415d57fe2a347b2900520894dcbac194e022a6366a6
 
 name:           haskell-soccer-simulation
 version:        0.1.0.0
@@ -42,7 +42,6 @@ library
   build-depends:
       Hoed
     , base >=4.7 && <5
-    , exact-combinatorics
     , json
     , random
     , regex-tdfa-text
@@ -58,7 +57,6 @@ executable haskell-soccer-simulation-exe
   build-depends:
       Hoed
     , base >=4.7 && <5
-    , exact-combinatorics
     , haskell-soccer-simulation
     , json
     , random
@@ -76,7 +74,6 @@ test-suite haskell-soccer-simulation-test
   build-depends:
       Hoed
     , base >=4.7 && <5
-    , exact-combinatorics
     , haskell-soccer-simulation
     , json
     , random
