@@ -3,8 +3,9 @@ module Match where
 import Team
 import PlannedMatch
 import Lib
+import Data.List
 
-data Match = Match { home :: Team, away :: Team, homeScore :: Int, awayScore :: Int } deriving Show
+data Match = Match { home :: Team, away :: Team, homeScore :: Int, awayScore :: Int }
 
 playMatch :: [Int] -> PlannedMatch -> (Match, [Int])
 playMatch randomGoals PlannedMatch { home' = h, away' = a } = 
@@ -20,3 +21,6 @@ addMatch Team { points = p, name = n, conceded = c, scored = s } conceded scored
 
 getNewTeamsFromMatch :: Match -> [Team]
 getNewTeamsFromMatch Match { home = h, away = a, homeScore = hs, awayScore = as } = [addMatch h as hs, addMatch a hs as] 
+
+instance Show Match where
+  show Match { home = h, away = a, homeScore = hs, awayScore = as } = concat . intersperse " " $ [name h, show hs, "-", show as, name a]
