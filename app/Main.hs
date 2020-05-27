@@ -1,10 +1,11 @@
 module Main where
 
-import Debug.Trace
 import Text.JSON.Generic
 import System.IO
 import Control.Monad
 import Season
+import Lib
+import System.Random
 
 --------------------------------------
 
@@ -31,9 +32,8 @@ main = do
   fileString <- readFile "team.json"
   let teamNames = validateTeamNames (decode fileString :: Result [String])
   let season = makeSeason "2019/2020" teamNames
-  print season
+  print $ rounds season
+  seed <- newStdGen
+  let randomGoals = take ((((length teamNames ) - 1) * 2) * (length teamNames) ) (randomListIntFromRange (1,10) seed)
   print "End"
-  -- seed <- newStdGen
-  -- let randomGoals = take ((length matches) * 2) (randomListIntFromRange (1,10) seed)
-  -- let rounds = play 8 (randomGoals, matches, teams, 1, Round [] 0 Nothing)
-  -- print . concat . intersperse "\n---------------------------\n" . map show . map Table . map get3 $ rounds
+  

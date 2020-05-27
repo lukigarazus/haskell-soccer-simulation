@@ -5,27 +5,54 @@ import Match
 import Lib
 import Team
 import Data.List
+import Opponents
 
 data Round = Round { roundMatches :: [PlannedMatch], index :: Int, played :: Maybe [Match] }
 
-getTeamsFromRound pm = concat . map (\PlannedMatch { home' = h, away' = a } -> [h,a]) $ pm
+---------------------------------------------------------------
 
-findNextMatchForRound pms ro = find (\PlannedMatch { home' = h, away' = a } ->  (not (elem h roundTeams)) && (not (elem a roundTeams)) ) pms
-  where roundTeams = traceLog (getTeamsFromRound ro)
+makeRounds opponents modifier = go opponents []
+  where go opponents rounds =
+          case all (\Opponents { opponents = o } -> (length o) == 0) opponents of
+            True  -> rounds
+            False -> go newOpponents (rounds ++ (newRound : []))
+              where newRound     = makeRound opponents ((length rounds) + 1 + modifier)
+                    newOpponents = removeUsedOpponents opponents newRound
 
-makeRound pms i = go pms []
-  where go pms ro =
-          case findNextMatchForRound pms ro of
-            Nothing -> Round ro i Nothing
-            Just m  -> go pms (m : ro) 
+findValidOpponent go team potentialOpponents matches opponentsObjects teams =
+  case potentialOpponents of
+    [] -> Nothing
+    (o : rest)  ->
+      case elem o teams of
+        True  -> findValidOpponent go team rest matches opponentsObjects teams
+        False -> 
+          case go (tail opponentsObjects) ((PlannedMatch team o) : matches) of
+            Nothing -> findValidOpponent go team rest matches opponentsObjects teams
+            x       -> x
 
-makeRounds :: [PlannedMatch] -> [Round]
-makeRounds pms = go pms []
-  where go pms rounds
-            | pms == [] = traceLog rounds
-            | otherwise = go newPms (newRound : rounds)
-              where newRound = makeRound pms ((length rounds) + 1)
-                    newPms = removeRoundMatchesFromPlannedMatches pms newRound
+makeRound' opponentsObjects = go opponentsObjects []
+  where go opponentsObjects matches =
+          case opponentsObjects of
+            []  -> Just matches
+            (Opponents { team = t, opponents = o } : rest) ->
+              case elem t teams of
+                True  -> go rest matches
+                False -> findValidOpponent go t o matches opponentsObjects teams
+              where teams = concat . map getTeamsFromPlannedMatch $ matches
+  
+makeRound opponentsObjects i =
+  case makeRound' opponentsObjects of
+    Nothing -> Round [] (-1) Nothing
+    Just x  -> Round x  i    Nothing
+
+areTeamsPlaying h a m =
+  case find (\PlannedMatch { home' = h', away' = a' } -> (h' == a || h' == h) && (a' == a || a' == h)) m of
+    Nothing -> False
+    _       -> True
+
+removeUsedOpponents opponents Round { roundMatches = rm } = map (\Opponents { team = t, opponents = o } -> Opponents t (filter (\o -> not $ areTeamsPlaying t o rm) o)) opponents
+
+---------------------------------------------------------------
 
 accumulatePlayedMatches (ms, randomGoals) pm =
     case playMatch randomGoals pm of

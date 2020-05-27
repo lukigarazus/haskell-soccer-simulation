@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: afa09208f211fd3c4d99fd976b748b6e06071009d1b043b4f0a04a74a3e57983
+-- hash: e09e30a850977dcadc13e1cadf22258e8c7ee537557fe973c9ed891ee4c0250a
 
 name:           haskell-soccer-simulation
 version:        0.1.0.0
@@ -29,6 +29,7 @@ library
       League
       Lib
       Match
+      Opponents
       PlannedMatch
       Round
       Season
